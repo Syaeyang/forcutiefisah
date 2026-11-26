@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Letters for you 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky1:#dfe7ff; --sky2:#ffe2ec; --paper:#fffdf9; --ink:#4a3f5c; --soft:#8a7fa0;
+  --pink:#ff8fb1; --tape:#ffd9a8; --shadow:rgba(120,100,170,.25);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){color-scheme:light}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--sky1:#2b2750; --sky2:#4a2f55; --paper:#fff8f1; --ink:#4a3f5c; --soft:#d9cff0; --shadow:rgba(0,0,0,.4); color-scheme:dark}
+}
+:root[data-theme="dark"]{--sky1:#2b2750; --sky2:#4a2f55; --paper:#fff8f1; --soft:#d9cff0; --shadow:rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(160deg,var(--sky1),var(--sky2));font-family:'Fredoka','Trebuchet MS',sans-serif;color:var(--ink);overflow:hidden;position:relative}
+.float{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.float span{position:absolute;bottom:-40px;font-size:22px;opacity:.55;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-115vh) rotate(25deg)}}
+main{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 16px 84px}
+.card{width:min(92vw,460px);max-height:72vh;overflow:auto;background:var(--paper);border-radius:18px;padding:34px 28px 26px;box-shadow:0 14px 36px var(--shadow);position:relative;transform:rotate(-1.2deg);animation:pop .45s ease}
+.card.alt{transform:rotate(1deg)}
+.card::before{content:"";position:absolute;top:-12px;left:50%;width:90px;height:26px;margin-left:-45px;background:var(--tape);opacity:.85;transform:rotate(-3deg);border-radius:3px}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}}
+.card h1,.card h2{font-family:'Caveat',cursive;margin:0 0 10px;font-size:2.3rem;line-height:1.1}
+.body{font-family:'Caveat',cursive;font-size:1.65rem;line-height:1.35;margin:0 0 18px;white-space:pre-line}
+.from{font-family:'Caveat',cursive;font-size:1.7rem;text-align:right;color:var(--pink);font-weight:700;margin:0}
+.big{font-size:3.2rem;text-align:center;margin-bottom:6px}
+.center{text-align:center}
+.small{font-size:.95rem;color:#8a7fa0;margin:6px 0 18px}
+button.open{font:500 1.05rem 'Fredoka',sans-serif;background:var(--pink);color:#fff;border:0;border-radius:999px;padding:12px 26px;cursor:pointer;box-shadow:0 6px 14px rgba(255,143,177,.45)}
+button.open:hover{filter:brightness(1.05)}
+nav{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:14px}
+nav button{width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:var(--ink);font-size:1.3rem;cursor:pointer;box-shadow:0 4px 10px var(--shadow)}
+nav button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;max-width:55vw}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--soft);opacity:.4}
+.dots i.on{opacity:1;background:var(--pink);transform:scale(1.3)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.float{display:none}.card{animation:none}}
+</style>
+</head>
+<body>
+<div class="float" id="float" aria-hidden="true"></div>
+<main id="stage" aria-live="polite"></main>
+<nav id="nav">
+  <button id="prev" aria-label="Previous letter">‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" aria-label="Next letter">›</button>
+</nav>
+
+<script>
+/* ✏️ EDIT HERE: change the name, the letters and the senders ✏️ */
+const NAME = "Bestie";
+const INTRO = "A few people who love you wrote you something. Read one whenever you need it, no rush.";
+const LETTERS = [
+  { from: "Aisyah", text: "Hi Pisahhh! We just nak remind you yang you are loved, more than you know. 🤍 kitorng mungkin tak tahu exactly apa yang aok tengah lalui sekarang, but please remember it’s okay to feel tired, to have bad days and to take your time. You don’t always have to pretend to be okay. Please jangan rasa you ni beban. You don’t have to explain everything or pretend to be happy around us. We’re always here, even if all you need is someone to teman you in silence. Take your time, Pisah. No pressure, no rush. You are precious, you are loved, and you are never alone. Sending you the biggest hug everrr! 🫂💗" },
+  { from: "Nurul", text: "Dear you,\n\nRemember that time we laughed so hard we couldn’t breathe? That’s still you. Even on the hard days, that person is still in there, and I adore her.\n\nTake it one tiny step at a time." },
+  { from: "Farah", text: "Hey bestie,\n\nYou don’t have to be strong for me. Be tired, be quiet, be messy. I’ll sit with you through all of it.\n\nProud of you for making it through today." },
+  { from: "Sara", text: "My favourite person,\n\nYou matter so much. The world is a softer place with you in it. Please be gentle with yourself the way you are with everyone else." }
+];
+const ENDING = "You are loved. So, so much.\nWe’re all just a message away. 💗";
+/* ---------------------------------------------------------- */
+
+const slides = [
+  {k:"intro"},
+  ...LETTERS.map(l=>({k:"letter",...l})),
+  {k:"end"}
+];
+let i = 0;
+const stage = document.getElementById("stage");
+const dots = document.getElementById("dots");
+const prev = document.getElementById("prev");
+const next = document.getElementById("next");
+
+slides.forEach(()=>dots.appendChild(document.createElement("i")));
+
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+function render(){
+  const s = slides[i];
+  let h = "";
+  if(s.k==="intro"){
+    h = `<div class="card center"><div class="big">💌</div><h1>For ${esc(NAME)}</h1><p class="body">${esc(INTRO)}</p><button class="open" id="go">Open the first letter</button></div>`;
+  } else if(s.k==="letter"){
+    h = `<div class="card ${i%2?'alt':''}"><p class="body">${esc(s.text)}</p><p class="from">with love, ${esc(s.from)} 🌷</p></div>`;
+  } else {
+    h = `<div class="card center"><div class="big">🌸</div><h2>That’s everyone</h2><p class="body">${esc(ENDING)}</p><button class="open" id="again">Read them again</button></div>`;
+  }
+  stage.innerHTML = h;
+  [...dots.children].forEach((d,n)=>d.classList.toggle("on",n===i));
+  prev.disabled = i===0;
+  next.disabled = i===slides.length-1;
+  const go = document.getElementById("go"); if(go) go.onclick = ()=>move(1);
+  const again = document.getElementById("again"); if(again) again.onclick = ()=>{i=0;render();};
+}
+function move(d){ const n=i+d; if(n<0||n>=slides.length) return; i=n; render(); }
+prev.onclick = ()=>move(-1);
+next.onclick = ()=>move(1);
+document.addEventListener("keydown",e=>{ if(e.key==="ArrowRight") move(1); if(e.key==="ArrowLeft") move(-1); });
+
+let sx=null;
+document.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;},{passive:true});
+document.addEventListener("touchend",e=>{
+  if(sx===null) return;
+  const dx=e.changedTouches[0].clientX-sx; sx=null;
+  if(Math.abs(dx)>50) move(dx<0?1:-1);
+},{passive:true});
+
+const fl = document.getElementById("float");
+["💗","✨","🌸","💛","🦋","☁️"].forEach((e,n)=>{
+  for(let k=0;k<3;k++){
+    const s=document.createElement("span");
+    s.textContent=e;
+    s.style.left=(Math.random()*95)+"%";
+    s.style.animationDuration=(14+Math.random()*14)+"s";
+    s.style.animationDelay=(-Math.random()*20)+"s";
+    fl.appendChild(s);
+  }
+});
+render();
+</script>
+</body>
+</html>
