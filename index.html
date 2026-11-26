@@ -23,16 +23,22 @@ body{background:linear-gradient(160deg,var(--sky1),var(--sky2));font-family:'Fre
 .float span{position:absolute;bottom:-40px;font-size:22px;opacity:.55;animation:rise linear infinite}
 @keyframes rise{to{transform:translateY(-115vh) rotate(25deg)}}
 main{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 16px 84px}
-.card{width:min(92vw,460px);max-height:72vh;overflow:auto;background:var(--paper);border-radius:18px;padding:34px 28px 26px;box-shadow:0 14px 36px var(--shadow);position:relative;transform:rotate(-1.2deg);animation:pop .45s ease}
+.card{width:min(92vw,460px);max-height:74vh;overflow:auto;background:var(--paper);border-radius:18px;padding:34px 28px 22px;box-shadow:0 14px 36px var(--shadow);position:relative;transform:rotate(-1.2deg);animation:pop .45s ease}
 .card.alt{transform:rotate(1deg)}
 .card::before{content:"";position:absolute;top:-12px;left:50%;width:90px;height:26px;margin-left:-45px;background:var(--tape);opacity:.85;transform:rotate(-3deg);border-radius:3px}
 @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}}
 .card h1,.card h2{font-family:'Caveat',cursive;margin:0 0 10px;font-size:2.3rem;line-height:1.1}
-.body{font-family:'Caveat',cursive;font-size:1.65rem;line-height:1.35;margin:0 0 18px;white-space:pre-line}
+.body{font-family:'Caveat',cursive;font-size:1.6rem;line-height:1.42;margin:0 0 16px;white-space:pre-line}
 .from{font-family:'Caveat',cursive;font-size:1.7rem;text-align:right;color:var(--pink);font-weight:700;margin:0}
+.who{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--soft);margin:0 0 8px}
+.pg{display:flex;justify-content:space-between;font-size:.85rem;color:#8a7fa0;margin-top:10px}
 .big{font-size:3.2rem;text-align:center;margin-bottom:6px}
 .center{text-align:center}
-.small{font-size:.95rem;color:#8a7fa0;margin:6px 0 18px}
+.polaroid{width:min(86vw,360px);background:#fff;padding:14px 14px 18px;border-radius:6px;box-shadow:0 14px 36px var(--shadow);transform:rotate(-2deg);position:relative;animation:pop .45s ease;text-align:center}
+.polaroid.alt{transform:rotate(2deg)}
+.polaroid::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;margin-left:-42px;background:var(--tape);opacity:.85;transform:rotate(3deg);border-radius:3px}
+.polaroid img{display:block;width:100%;max-height:52vh;object-fit:cover;border-radius:3px;background:#f1ecf7}
+.polaroid p{font-family:'Caveat',cursive;font-size:1.6rem;margin:12px 0 0;color:#4a3f5c}
 button.open{font:500 1.05rem 'Fredoka',sans-serif;background:var(--pink);color:#fff;border:0;border-radius:999px;padding:12px 26px;cursor:pointer;box-shadow:0 6px 14px rgba(255,143,177,.45)}
 button.open:hover{filter:brightness(1.05)}
 nav{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:14px}
@@ -42,53 +48,94 @@ nav button:disabled{opacity:.35;cursor:default}
 .dots i{width:9px;height:9px;border-radius:50%;background:var(--soft);opacity:.4}
 .dots i.on{opacity:1;background:var(--pink);transform:scale(1.3)}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.float{display:none}.card{animation:none}}
+@media (prefers-reduced-motion:reduce){.float{display:none}.card,.polaroid{animation:none}}
 </style>
 </head>
 <body>
 <div class="float" id="float" aria-hidden="true"></div>
 <main id="stage" aria-live="polite"></main>
 <nav id="nav">
-  <button id="prev" aria-label="Previous letter">‹</button>
+  <button id="prev" aria-label="Previous">‹</button>
   <div class="dots" id="dots"></div>
-  <button id="next" aria-label="Next letter">›</button>
+  <button id="next" aria-label="Next">›</button>
 </nav>
 
 <script>
-/* ✏️ EDIT HERE: change the name, the letters and the senders ✏️ */
+/* ✏️ EDIT HERE: change the name, the letters, the photos ✏️ */
 const NAME = "Bestie";
 const INTRO = "A few people who love you wrote you something. Read one whenever you need it, no rush.";
+
+/* Letters: long ones are split into small pages automatically. */
 const LETTERS = [
   { from: "Aisyah", text: "Hi Pisahhh! We just nak remind you yang you are loved, more than you know. 🤍 kitorng mungkin tak tahu exactly apa yang aok tengah lalui sekarang, but please remember it’s okay to feel tired, to have bad days and to take your time. You don’t always have to pretend to be okay. Please jangan rasa you ni beban. You don’t have to explain everything or pretend to be happy around us. We’re always here, even if all you need is someone to teman you in silence. Take your time, Pisah. No pressure, no rush. You are precious, you are loved, and you are never alone. Sending you the biggest hug everrr! 🫂💗" },
   { from: "Nurul", text: "Dear you,\n\nRemember that time we laughed so hard we couldn’t breathe? That’s still you. Even on the hard days, that person is still in there, and I adore her.\n\nTake it one tiny step at a time." },
   { from: "Farah", text: "Hey bestie,\n\nYou don’t have to be strong for me. Be tired, be quiet, be messy. I’ll sit with you through all of it.\n\nProud of you for making it through today." },
   { from: "Sara", text: "My favourite person,\n\nYou matter so much. The world is a softer place with you in it. Please be gentle with yourself the way you are with everyone else." }
 ];
+
+/* Photos: each one becomes a little polaroid after the letters.
+   If you host on GitHub Pages, put images in a folder called "photos"
+   next to this file and write src: "photos/us1.jpg".
+   Remove the slashes below and edit to add yours. */
+const MEMORIES = [
+  // { src: "photos/us1.jpg", caption: "Our trip to Genting 🌿" },
+  // { src: "photos/us2.jpg", caption: "That silly selfie 😂" },
+];
+
 const ENDING = "You are loved. So, so much.\nWe’re all just a message away. 💗";
+const PAGE_SIZE = 300; /* bigger = longer pages, smaller = shorter pages */
 /* ---------------------------------------------------------- */
 
-const slides = [
-  {k:"intro"},
-  ...LETTERS.map(l=>({k:"letter",...l})),
-  {k:"end"}
-];
+function paginate(text){
+  const units = [];
+  text.trim().split(/\n\s*\n/).forEach(p=>{
+    const ss = p.match(/[^.!?]+[.!?]+["”’]?\s*|[^.!?]+$/g) || [p];
+    ss.forEach((s,k)=>{
+      const t = s.trim(); if(!t) return;
+      if(units.length && !/[A-Za-z]/.test(t)){ units[units.length-1].t += " " + t; return; }
+      units.push({t, para: k===0 && units.length>0});
+    });
+  });
+  const pages = []; let cur = "";
+  units.forEach(u=>{
+    const add = (cur ? (u.para ? "\n\n" : " ") : "") + u.t;
+    if(cur && (cur+add).length > PAGE_SIZE){ pages.push(cur); cur = u.t; }
+    else cur += add;
+  });
+  if(cur) pages.push(cur);
+  return pages;
+}
+
+const slides = [{k:"intro"}];
+LETTERS.forEach(l=>{
+  const pages = paginate(l.text);
+  pages.forEach((t,n)=>slides.push({k:"letter", from:l.from, text:t, n:n+1, total:pages.length}));
+});
+MEMORIES.forEach(m=>slides.push({k:"photo", ...m}));
+slides.push({k:"end"});
+
 let i = 0;
 const stage = document.getElementById("stage");
 const dots = document.getElementById("dots");
 const prev = document.getElementById("prev");
 const next = document.getElementById("next");
-
 slides.forEach(()=>dots.appendChild(document.createElement("i")));
 
-function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
 function render(){
   const s = slides[i];
+  const alt = i%2 ? "alt" : "";
   let h = "";
   if(s.k==="intro"){
     h = `<div class="card center"><div class="big">💌</div><h1>For ${esc(NAME)}</h1><p class="body">${esc(INTRO)}</p><button class="open" id="go">Open the first letter</button></div>`;
   } else if(s.k==="letter"){
-    h = `<div class="card ${i%2?'alt':''}"><p class="body">${esc(s.text)}</p><p class="from">with love, ${esc(s.from)} 🌷</p></div>`;
+    const last = s.n===s.total;
+    h = `<div class="card ${alt}"><p class="who">a letter from ${esc(s.from)} 🌷</p><p class="body">${esc(s.text)}${last?"":" …"}</p>` +
+        (last ? `<p class="from">with love, ${esc(s.from)}</p>` : "") +
+        (s.total>1 ? `<div class="pg"><span>page ${s.n} of ${s.total}</span><span>${last?"":"keep going ›"}</span></div>` : "") + `</div>`;
+  } else if(s.k==="photo"){
+    h = `<div class="polaroid ${alt}"><img src="${esc(s.src)}" alt="${esc(s.caption||"A memory of us")}">${s.caption?`<p>${esc(s.caption)}</p>`:""}</div>`;
   } else {
     h = `<div class="card center"><div class="big">🌸</div><h2>That’s everyone</h2><p class="body">${esc(ENDING)}</p><button class="open" id="again">Read them again</button></div>`;
   }
@@ -113,7 +160,7 @@ document.addEventListener("touchend",e=>{
 },{passive:true});
 
 const fl = document.getElementById("float");
-["💗","✨","🌸","💛","🦋","☁️"].forEach((e,n)=>{
+["💗","✨","🌸","💛","🦋","☁️"].forEach(e=>{
   for(let k=0;k<3;k++){
     const s=document.createElement("span");
     s.textContent=e;
